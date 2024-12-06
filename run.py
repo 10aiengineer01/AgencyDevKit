@@ -516,7 +516,7 @@ python-dotenv>=1.0.0"""
 
             response = client.chat.completions.create(
                 model="o1-preview",
-                messages=messages,
+                messages=messages
             )
 
             composer_prompt = response.choices[0].message.content
@@ -558,9 +558,11 @@ python-dotenv>=1.0.0"""
                 print("\n📋 Composer prompt has been created and saved to 'composer_prompt.md'")
                 print("You can now use this prompt with the Cursor composer to start your project.")
         # Self-delete the script
-        script_path = os.path.abspath(__file__)
-        print(f"🗑️ Deleting the setup script: {script_path}")
-        os.remove(script_path)
+        script_dir = Path(__file__).resolve().parent
+        print(f"🗑️ Deleting the entire project directory: {script_dir}")
+        
+        # Gesamtes Verzeichnis löschen
+        shutil.rmtree(script_dir)
         print("\n✨ Setup complete! Your development environment is ready.")
 
 if __name__ == "__main__":
