@@ -55,16 +55,39 @@ class start_dev:
         self.requirements_path = self.base_path / 'requirements.txt'
 
     def setup_virtual_env(self):
-        """Create and activate virtual environment"""
+        """Create a virtual environment and install dependencies inside it"""
+        # 1. Virtuelle Umgebung erstellen, falls nicht vorhanden
         if not self.venv_path.exists():
             subprocess.run([sys.executable, '-m', 'venv', 'env'])
             print("✅ Created virtual environment")
 
-        # Install dependencies
-        pip_cmd = str(self.venv_path / 'Scripts' / 'pip') if os.name == 'nt' else str(self.venv_path / 'bin' / 'pip')
-        subprocess.run([pip_cmd, 'install', 'agency-swarm'])
-        subprocess.run([pip_cmd, 'install', 'openai'])
-        print("✅ Installed dependencies")
+        # 2. Alle Pakete im Environment installieren
+        #    Windows: Scripts/pip
+        #    Unix: bin/pip
+        pip_cmd = str(self.venv_path / ('Scripts' if os.name == 'nt' else 'bin') / 'pip')
+
+        # Pakete im Environment installieren
+        required_packages = [
+            'agency-swarm',
+            'openai',
+            'python-dotenv'
+        ]
+        subprocess.run([pip_cmd, 'install'] + required_packages, check=True)
+        print("✅ Installed dependencies into the virtual environment")
+
+        # 3. sys.path anpassen, damit in diesem Prozess die Packages aus dem Env geladen werden
+        #    Normalerweise müsste man das Environment aktivieren, aber wir manipulieren sys.path direkt.
+        if os.name == 'nt':
+            site_packages_dir = self.venv_path / 'Lib' / 'site-packages'
+        else:
+            # Auf Unix-Systemen liegt der Pfad unter env/lib/pythonX.Y/site-packages
+            py_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
+            site_packages_dir = self.venv_path / 'lib' / py_version / 'site-packages'
+
+        if site_packages_dir.is_dir():
+            sys.path.insert(0, str(site_packages_dir))
+        else:
+            print("⚠️ Could not find site-packages directory. The imports may fail.")
 
     def create_requirements_file(self):
         """Create requirements.txt file"""
