@@ -2,6 +2,7 @@ import sys
 import subprocess
 from pathlib import Path
 import os
+import shutil
 
 def check_and_install_dependencies():
     """Check and install required dependencies"""
