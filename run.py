@@ -558,6 +558,17 @@ python-dotenv>=1.0.0"""
             if composer_prompt:
                 print("\n📋 Composer prompt has been created and saved to 'composer_prompt.md'")
                 print("You can now use this prompt with the Cursor composer to start your project.")
+
+        print("🔧 Activating virtual environment before deletion...")
+        if os.name == 'nt':
+            # Windows
+            activate_script = str(self.venv_path / 'Scripts' / 'activate')
+            subprocess.run(['cmd', '/c', f'"{activate_script}" && echo Environment activated!'])
+        else:
+            # Unix
+            activate_script = str(self.venv_path / 'bin' / 'activate')
+            subprocess.run(['bash', '-c', f'source "{activate_script}" && echo Environment activated!'], shell=False)
+        
         # Self-delete the script
         script_dir = Path(__file__).resolve().parent
         print(f"🗑️ Deleting the entire project directory: {script_dir}")
