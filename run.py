@@ -56,17 +56,12 @@ class start_dev:
 
     def setup_virtual_env(self):
         """Create a virtual environment and install dependencies inside it"""
-        # 1. Virtuelle Umgebung erstellen, falls nicht vorhanden
         if not self.venv_path.exists():
             subprocess.run([sys.executable, '-m', 'venv', 'env'])
             print("✅ Created virtual environment")
 
-        # 2. Alle Pakete im Environment installieren
-        #    Windows: Scripts/pip
-        #    Unix: bin/pip
         pip_cmd = str(self.venv_path / ('Scripts' if os.name == 'nt' else 'bin') / 'pip')
 
-        # Pakete im Environment installieren
         required_packages = [
             'agency-swarm',
             'openai',
@@ -75,12 +70,9 @@ class start_dev:
         subprocess.run([pip_cmd, 'install'] + required_packages, check=True)
         print("✅ Installed dependencies into the virtual environment")
 
-        # 3. sys.path anpassen, damit in diesem Prozess die Packages aus dem Env geladen werden
-        #    Normalerweise müsste man das Environment aktivieren, aber wir manipulieren sys.path direkt.
         if os.name == 'nt':
             site_packages_dir = self.venv_path / 'Lib' / 'site-packages'
         else:
-            # Auf Unix-Systemen liegt der Pfad unter env/lib/pythonX.Y/site-packages
             py_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
             site_packages_dir = self.venv_path / 'lib' / py_version / 'site-packages'
 
@@ -581,16 +573,6 @@ python-dotenv>=1.0.0"""
             if composer_prompt:
                 print("\n📋 Composer prompt has been created and saved to 'composer_prompt.md'")
                 print("You can now use this prompt with the Cursor composer to start your project.")
-
-        print("🔧 Activating virtual environment before deletion...")
-        if os.name == 'nt':
-            # Windows
-            activate_script = str(self.venv_path / 'Scripts' / 'activate')
-            subprocess.run(['cmd', '/c', f'"{activate_script}" && echo Environment activated!'])
-        else:
-            # Unix
-            activate_script = str(self.venv_path / 'bin' / 'activate')
-            subprocess.run(['bash', '-c', f'source "{activate_script}" && echo Environment activated!'], shell=False)
         
         # Self-delete the script
         script_dir = Path(__file__).resolve().parent
