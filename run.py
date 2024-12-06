@@ -471,7 +471,7 @@ python-dotenv>=1.0.0"""
         
     def create_gitignore_file(self):
         """Create .gitignore file and add .composer entry"""
-        gitignore_content = ".composer\n env"
+        gitignore_content = ".composer\nenv"
         gitignore_path = self.base_path / '.gitignore'
         
         with open(gitignore_path, 'w', encoding='utf-8') as f:
