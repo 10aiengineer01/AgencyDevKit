@@ -52,7 +52,7 @@ class CheckRequirementsTool(BaseTool):
                     Are there specifications regarding special functions, interfaces (OpenAPI schemas), databases, or external services needed?
                     Technical Parameters:
 
-                    Is it specified which model will be used (e.g., GPT-3.5-turbo)?
+                    Is it specified which model will be used?
                     Are parameters such as temperature, token limits, or other settings defined?
                     User Requirements and Input Formats:
 
@@ -73,7 +73,7 @@ class CheckRequirementsTool(BaseTool):
                 "content": [
                     {
                     "type": "text",
-                    "text": self.information
+                    "text": "New information: "+self.information
                     }
                 ]
                 },
