@@ -11,7 +11,7 @@ class CheckRequirementsTool(BaseTool):
     """
 
     information: str = Field(
-        ..., description="The project information user already has provided"
+        ..., description="The information from the user"
     )
 
     def run(self):
@@ -19,6 +19,11 @@ class CheckRequirementsTool(BaseTool):
         Analyzes the given requirements to identify missing or unclear elements.
         Returns a report highlighting areas that need further clarification.
         """
+        if self._shared_state.get("information", None) is not None:
+            self.information = self._shared_state.get("information")+"\n"+self.information
+            self._shared_state.set("information", self.information)
+        else:        
+            self._shared_state.set("information", self.information)
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -28,7 +33,7 @@ class CheckRequirementsTool(BaseTool):
                 "content": [
                     {
                     "type": "text",
-                    "text": "Your job is to plan a project. You will get information the user already provided. Your job is to tell, which information is missing to to create a plan for the project."
+                    "text": "Your job is to plan a project. You will get 'information' the user already provided. Your job is to tell, which information is missing to to create a plan for the project. INFORMATION: "+self._shared_state.get("information")
                     }
                 ]
                 },
