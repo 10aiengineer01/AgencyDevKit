@@ -54,7 +54,6 @@ class start_dev:
         self.venv_path = self.base_path / 'env'
         self.composer_path = self.base_path / '.composer'
         self.requirements_path = self.base_path / 'requirements.txt'
-        self.agency = create_initiall_prompt()
 
     def setup_virtual_env(self):
         """Create a virtual environment and install dependencies inside it"""
@@ -525,6 +524,7 @@ python-dotenv>=1.0.0"""
         print("\n📝 Please provide a description of your project:")
         project_description = input("> ")
         
+        self.agency = create_initiall_prompt()
         if project_description:
             self.agency.run(prompt=project_description)
             if composer_prompt:
