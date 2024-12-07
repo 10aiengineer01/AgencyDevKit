@@ -524,7 +524,7 @@ python-dotenv>=1.0.0"""
         print("\n📝 Please provide a description of your project:")
         project_description = input("> ")
         
-        self.agency = create_initiall_prompt()
+        self.agency = create_initiall_prompt(key=api_key)
         if project_description:
             self.agency.run(prompt=project_description)
             if composer_prompt:
