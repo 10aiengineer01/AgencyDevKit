@@ -43,6 +43,7 @@ def check_and_install_dependencies():
 if check_and_install_dependencies():
     from dotenv import load_dotenv
     from openai import OpenAI
+    from ProjectPlanningAgency.agency import create_initiall_prompt
 else:
     sys.exit(1)
 
@@ -53,6 +54,7 @@ class start_dev:
         self.venv_path = self.base_path / 'env'
         self.composer_path = self.base_path / '.composer'
         self.requirements_path = self.base_path / 'requirements.txt'
+        self.agency = create_initiall_prompt()
 
     def setup_virtual_env(self):
         """Create a virtual environment and install dependencies inside it"""
@@ -504,51 +506,6 @@ python-dotenv>=1.0.0"""
         print("✅ Set up API key")
         return api_key
 
-    def create_composer_prompt(self, project_description: str, api_key: str) -> str:
-        """Create a detailed prompt for the Cursor composer based on project description"""
-        try:
-            client = OpenAI(api_key=api_key)
-            
-            messages = [
-                {"role": "system", "content": "You are an expert at creating detailed project specifications and development plans. Your task is to create a comprehensive prompt for the Cursor composer based on the project description provided."},
-                {"role": "user", "content": f"""Please create a detailed development plan and specification for the following project:
-
-                {project_description}
-
-                Include the following aspects:
-                1. Project Overview
-                2. Technical Requirements
-                3. Architecture Design
-                4. Key Features and Components
-                5. Development Phases
-                6. Testing Strategy
-                7. Dependencies and Tools
-                8. Security Considerations
-                9. Performance Requirements
-                10. Deployment Strategy
-
-                Format the response in a clear, structured manner suitable for a development team."""}
-            ]
-
-            response = client.chat.completions.create(
-                model="o1-preview",
-                messages=messages
-            )
-
-            composer_prompt = response.choices[0].message.content
-            
-            # Save the composer prompt to a file
-            prompt_file = self.base_path / 'composer_prompt.md'
-            with open(prompt_file, 'w', encoding='utf-8') as f:
-                f.write(composer_prompt)
-            
-            print("✅ Created composer prompt and saved to composer_prompt.md")
-            return composer_prompt
-
-        except Exception as e:
-            print(f"⚠️ Error creating composer prompt: {str(e)}")
-            return None
-
     def run(self):
         """Run the setup process"""
         print("🚀 Starting development environment setup...")
@@ -569,7 +526,7 @@ python-dotenv>=1.0.0"""
         project_description = input("> ")
         
         if project_description:
-            composer_prompt = self.create_composer_prompt(project_description, api_key)
+            self.agency.run(prompt=project_description)
             if composer_prompt:
                 print("\n📋 Composer prompt has been created and saved to 'composer_prompt.md'")
                 print("You can now use this prompt with the Cursor composer to start your project.")

@@ -1,0 +1,1 @@
+The mission of the ProjectPlanningAgency is to facilitate the planning of projects by collecting initial ideas, checking requirements, gathering missing information, and creating a comprehensive project plan. The agency operates in an environment where project planning needs to be efficient and user-friendly, enabling users to seamlessly transition from idea to execution.
