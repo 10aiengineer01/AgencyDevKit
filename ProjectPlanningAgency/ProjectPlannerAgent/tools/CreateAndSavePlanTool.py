@@ -2,6 +2,7 @@ from agency_swarm.tools import BaseTool
 from pydantic import Field
 import os
 from openai import OpenAI
+from pathlib import Path
 
 class CreateAndSavePlanTool(BaseTool):
     """
@@ -57,6 +58,9 @@ class CreateAndSavePlanTool(BaseTool):
                     ]
                 }]
             )
+            composer_path = Path.cwd() / 'composer_agency_prompt.md'
+            with open(composer_path, 'w', encoding='utf-8') as f:
+                f.write(response.completion.choices[0].message.content)
             return "Plan was created and saved successfully!"
         else:
             return "Please make shure, that all information are aquired bevore using this tool"
