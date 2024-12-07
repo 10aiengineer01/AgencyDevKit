@@ -527,6 +527,7 @@ python-dotenv>=1.0.0"""
         self.agency = create_initiall_prompt(key=api_key)
         if project_description:
             composer_prompt = self.agency.run(prompt=project_description)
+            print(composer_prompt)
             if composer_prompt:
                 print("\n📋 Composer prompt has been created and saved to 'composer_prompt.md'")
                 print("You can now use this prompt with the Cursor composer to start your project.")
