@@ -20,10 +20,11 @@ class CheckRequirementsTool(BaseTool):
         Returns a report highlighting areas that need further clarification.
         """
         if self._shared_state.get("information", None) is not None:
-            self.information = self._shared_state.get("information")+"\n"+self.information
+            past_information = self._shared_state.get("information")
+            self._shared_state.set("information", past_information+"\n"+self.information)
+        else:
             self._shared_state.set("information", self.information)
-        else:        
-            self._shared_state.set("information", self.information)
+            past_information = ""
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -64,7 +65,7 @@ class CheckRequirementsTool(BaseTool):
                     If all requirements are met, confirm that no additional information is necessary.
                     Your Task:
                     Analyze the available information and map it to these criteria. Then provide a precise statement indicating which, if any, additional details need to be requested to form a complete and actionable prompt. If all relevant details are present, state that no further information is required.
-                    INFORMATION: """+self._shared_state.get("information")
+                    INFORMATION: """+past_information
                     }
                 ]
                 },
@@ -88,4 +89,4 @@ class CheckRequirementsTool(BaseTool):
             presence_penalty=0
         )
 
-        return response.choices[0].message
+        return response.choices[0].message.content
